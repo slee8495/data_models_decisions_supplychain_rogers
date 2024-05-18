@@ -1,0 +1,12 @@
+name: data_models_decisions_supplychain_rogers
+title: data_models_decisions_supplychain_rogers
+username: business-analytics-slee
+account: business-analytics-slee
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12024854
+bundleId: 8630266
+url: https://business-analytics-slee.shinyapps.io/data_models_decisions_supplychain_rogers/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

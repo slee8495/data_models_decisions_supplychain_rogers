@@ -1,0 +1,120 @@
+---
+author: "Sangho Lee"
+date: 5/17/2024
+callout-appearance: minimal # this hides the blue "i" icon on .callout-notes
+editor_options: 
+  chunk_output_type: console
+---
+
+I'm going to analyze customer flow and behavior at Rogers market, which uses Amazon’s Just Walk Out technology, for my MGTA 456 - Supply Chain Analytics course at UC San Diego, MSBA program. The project involves creating an inventory build-up diagram and examining customer entry and exit patterns to determine the number of customers in the store each minute, entries in 15-minute intervals, and the average shopping duration using Little’s Law. This will help identify peak shopping times and optimize store operations to improve the shopping experience.
+
+*<span style="color:green">What is Amazon's Just Walk Out Technology?: Amazon's "Just Walk Out" technology enables a shopping experience where customers can enter a store, pick up the items they want, and leave without the need to check out at a traditional cashier station. It enables to track the consumer's shopping behavior and store the data</span>*
+
+## Data
+### Load the data into the enviorment
+
+I will begin by loading the necessary packages in both Python and R to handle data manipulation and analysis. I will then explore and explain the variables within the dataset, detailing their types, purposes, and any noteworthy aspects. 
+
+```{python}
+import pandas as pd
+import numpy as np
+import pyrsm as rsm
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import seaborn as sns
+```
+
+```{python, include = FALSE}
+rogers = pd.read_csv("Rogers_022824.csv")
+```
+
+```{r, message = FALSE, warning=FALSE}
+library(tidyverse)
+library(magrittr)
+library(scales)
+library(data.table)
+library(reticulate)
+```
+
+```{r}
+rogers <- read.csv("Rogers_022824.csv")
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+rogers %>%
+  DT::datatable(
+    extensions = 'Buttons',
+    options = list(
+      dom = 'Blfrtip',
+      buttons = c('copy', 'csv', 'excel'),
+      pageLength = 5,
+      scrollX = TRUE
+    )
+  )
+```
+
+### Data Explanation
+- store_id: Identifies the specific store where transactions occur.
+- purchase_datetime: The timestamp when the purchase was made.
+- product_title: The name of the product purchased.
+- sku: Stock Keeping Unit, a unique identifier for each product.
+- currency: Denotes the currency used for the transaction.
+- price: The price of the individual product.
+- quantity: The number of units of the product purchased in each transaction.
+- total_price: Calculated as the product of price and quantity.
+- type_of_transaction: Specifies whether the record is an order, return, or other type of transaction.
+- transaction_id: A unique identifier for each transaction.
+- transaction_datetime: Sometimes used interchangeably or in complement with purchase_datetime.
+- session_id: Identifies the shopping session.
+- product_category: Categorizes the product into broader groups.
+- product_subcategory: Provides a more detailed classification within the broader product category.
+- entry/exit_method: Indicates how the customer entered or exited the store (e.g., via an app).
+- trip_duration_mins: The total time spent by the customer from entry to exit, expressed in minutes.
+- group_size: The number of people in the customer's group.
+
+
+<br>
+
+#### Task #1: I will create an inventory build-up diagram to visualize the number of customers present in the store at each minute from 7AM to 11:00PM. This diagram will be constructed by processing the data available up to 11PM, while ignoring any entries beyond this time. Additionally, I will calculate the average inventory level, which will represent the average number of customers in the store throughout the specified timeframe. This analysis will help in understanding customer flow and store capacity utilization during operational hours.
+
+
+### Inventory build-up diagram
+
+```{python}
+# Convert 'purchase_datetime' to datetime format
+rogers['purchase_datetime'] = pd.to_datetime(rogers['purchase_datetime'], errors='coerce')
+
+# Filter data between 7AM and 11PM
+rogers = rogers[(rogers['purchase_datetime'].dt.time >= pd.to_datetime('07:00:00').time()) & 
+            (rogers['purchase_datetime'].dt.time <= pd.to_datetime('23:00:00').time())]
+
+# Sort data by datetime
+rogers.sort_values('purchase_datetime', inplace=True)
+
+# Create a new dataframe to count customers in the store every minute
+customer_count_per_minute = rogers['purchase_datetime'].dt.floor('T').value_counts().sort_index()
+
+# Plot the inventory build-up diagram
+plt.figure(figsize=(15, 7))
+plt.plot(customer_count_per_minute.index, customer_count_per_minute.values, marker='o', linestyle='-', color='b')
+plt.title('Customer Presence in Store Every Minute (7AM to 11PM)')
+plt.xlabel('Time')
+plt.ylabel('Number of Customers')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+
+
+
+### Average Inventory Level Calculation
+
+
+
+
+
+
+
+
