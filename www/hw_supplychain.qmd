@@ -43,14 +43,8 @@ rogers <- read.csv("Rogers_022824.csv")
 
 ```{r, message=FALSE, warning=FALSE}
 rogers %>%
-  DT::datatable(
-    extensions = 'Buttons',
-    options = list(
-      dom = 'Blfrtip',
-      pageLength = 5,
-      scrollX = TRUE
-    )
-  )
+  head(5) %>% 
+  knitr::kable()
 ```
 
 ### Data Explanation
